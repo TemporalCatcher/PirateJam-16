@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://j8pjxck2ut1e"]
+
+[ext_resource type="Script" path="res://entity.gd" id="1_74u1m"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_elf6v"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ammct"]
+size = Vector2(20, 30)
+
+[node name="Entity" type="CharacterBody2D"]
+collision_layer = 0
+script = ExtResource("1_74u1m")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_elf6v")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_ammct")
