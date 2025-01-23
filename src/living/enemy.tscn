@@ -1,0 +1,144 @@
+[gd_scene load_steps=8 format=3 uid="uid://cq50r5ufbo24a"]
+
+[ext_resource type="PackedScene" uid="uid://j8pjxck2ut1e" path="res://living/actor.tscn" id="1_fnb7r"]
+[ext_resource type="Texture2D" uid="uid://dx8a6lpontphy" path="res://living/player.png" id="3_0avfm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_26g7t"]
+size = Vector2(72, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kdwcv"]
+size = Vector2(33, 20)
+
+[sub_resource type="Animation" id="Animation_ca1f6"]
+resource_name = "idle"
+length = 0.2
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_jhgmx"]
+resource_name = "slash"
+length = 0.2
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [12]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Attack/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Attack/CollisionShape2D/ColorRect:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Attack:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [Vector2(16.5, -9)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_l40rx"]
+_data = {
+"idle": SubResource("Animation_ca1f6"),
+"slash": SubResource("Animation_jhgmx")
+}
+
+[node name="Enemy" groups=["Enemy"] instance=ExtResource("1_fnb7r")]
+script = null
+
+[node name="Hitbox" parent="." index="1"]
+collision_layer = 2
+
+[node name="Detector" type="Area2D" parent="." index="2"]
+position = Vector2(1, 0)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detector" index="0"]
+shape = SubResource("RectangleShape2D_26g7t")
+
+[node name="Attack" type="Area2D" parent="." index="3" groups=["Attack"]]
+position = Vector2(16.5, -9)
+collision_layer = 2
+collision_mask = 0
+input_pickable = false
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Attack" index="0"]
+shape = SubResource("RectangleShape2D_kdwcv")
+
+[node name="ColorRect" type="ColorRect" parent="Attack/CollisionShape2D" index="0"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.5
+offset_top = -10.0
+offset_right = 16.5
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.454902)
+
+[node name="Sprite2D" parent="." index="4"]
+texture = ExtResource("3_0avfm")
+offset = Vector2(0, -3)
+hframes = 4
+vframes = 7
+
+[node name="AnimationState" parent="." index="5"]
+libraries = {
+"": SubResource("AnimationLibrary_l40rx")
+}
+autoplay = "idle"
+script = null
+
+[connection signal="area_entered" from="Detector" to="." method="_on_detector_area_entered"]
+[connection signal="area_exited" from="Detector" to="." method="_on_detector_area_exited"]
+[connection signal="area_entered" from="Attack" to="." method="_on_attack_area_entered"]
+[connection signal="animation_finished" from="AnimationState" to="." method="_on_animation_state_animation_finished"]

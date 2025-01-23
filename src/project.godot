@@ -15,10 +15,15 @@ run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[display]
+
+window/stretch/scale=2.0
+
 [global_group]
 
 Enemy=""
 Player=""
+Attack=""
 
 [input]
 
@@ -56,10 +61,10 @@ action={
 [layer_names]
 
 2d_physics/layer_1="Foreground"
-2d_physics/layer_2="Player Attack"
-2d_physics/layer_3="Enemy Attack"
+2d_physics/layer_2="Actors"
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+anti_aliasing/quality/msaa_2d=1

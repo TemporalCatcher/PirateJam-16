@@ -1,0 +1,41 @@
+[gd_scene load_steps=7 format=3 uid="uid://j8pjxck2ut1e"]
+
+[ext_resource type="Script" path="res://living/actor.gd" id="1_38qu7"]
+[ext_resource type="Script" path="res://animation_tree.gd" id="2_si6ra"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_elf6v"]
+height = 44.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d1fi5"]
+size = Vector2(20, 30)
+
+[sub_resource type="GDScript" id="GDScript_jvow0"]
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_chdu1"]
+
+[node name="Actor" type="CharacterBody2D"]
+collision_layer = 0
+script = ExtResource("1_38qu7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_elf6v")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+input_pickable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleShape2D_d1fi5")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="AnimationState" type="AnimationPlayer" parent="."]
+script = SubResource("GDScript_jvow0")
+
+[node name="AnimTree" type="AnimationTree" parent="."]
+deterministic = false
+tree_root = SubResource("AnimationNodeStateMachine_chdu1")
+script = ExtResource("2_si6ra")
+
+[connection signal="area_entered" from="Hitbox" to="." method="_on_hitbox_area_entered"]
