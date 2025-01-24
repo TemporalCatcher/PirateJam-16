@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bpbhrjopx6je0"]
+[gd_scene load_steps=19 format=3 uid="uid://bpbhrjopx6je0"]
 
 [ext_resource type="Script" path="res://living/player.gd" id="1_a3iau"]
 [ext_resource type="PackedScene" uid="uid://j8pjxck2ut1e" path="res://living/actor.tscn" id="1_hust8"]
@@ -94,6 +94,37 @@ tracks/6/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_a61aw"]
+resource_name = "charge_spear"
+length = 0.2
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [Vector2i(0, 5)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"spear"],
+"method": &"attack"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_6gtoy"]
@@ -200,6 +231,20 @@ tracks/6/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [Vector2(8, 8), Vector2(12.0181, 10.4352), Vector2(16, 15), Vector2(0, 0)]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("AnimTree")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"make_queueable"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_wjmu3"]
@@ -330,6 +375,20 @@ tracks/5/keys = {
 "update": 1,
 "values": [0.0, -0.708604]
 }
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("AnimTree")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"make_queueable"
+}]
+}
 
 [sub_resource type="Animation" id="Animation_e35fw"]
 resource_name = "spear_down"
@@ -367,7 +426,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_qw4iv"]
 resource_name = "spear_up"
-length = 0.4
+length = 0.2
 step = 0.2
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -376,10 +435,10 @@ tracks/0/path = NodePath("Sprite2D:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [Vector2i(0, 5), Vector2i(1, 5)]
+"values": [Vector2i(1, 5)]
 }
 tracks/1/type = "method"
 tracks/1/imported = false
@@ -388,11 +447,25 @@ tracks/1/path = NodePath(".")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.2),
+"times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [&"spear"],
 "method": &"attack"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimTree")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"make_queueable"
 }]
 }
 
@@ -486,10 +559,25 @@ tracks/6/keys = {
 "update": 1,
 "values": [Vector2(8, 8), Vector2(10, 30), Vector2(14, 14), Vector2(0, 0)]
 }
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("AnimTree")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"make_queueable"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_snmju"]
 _data = {
 "RESET": SubResource("Animation_rgip0"),
+"charge_spear": SubResource("Animation_a61aw"),
 "fall": SubResource("Animation_6gtoy"),
 "hammer": SubResource("Animation_ggaft"),
 "idle": SubResource("Animation_wjmu3"),
@@ -537,4 +625,3 @@ script = null
 [node name="AnimTree" parent="." index="5"]
 tree_root = ExtResource("4_pj1r6")
 anim_player = NodePath("../AnimationState")
-parameters/Attack/Ground1/blend_position = Vector2(0, 0)

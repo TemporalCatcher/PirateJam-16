@@ -1,5 +1,6 @@
 class_name AnimTree
 extends AnimationTree
+## This class deals with all transitions of animations
 
 enum {
 	STANDARD,
@@ -7,11 +8,20 @@ enum {
 	HURT,
 }
 
-const ZERO := Vector2.ZERO
-const LEFT := Vector2.LEFT
-const RIGHT := Vector2.RIGHT
-const UP := Vector2.UP
-const DOWN := Vector2.DOWN
+enum {
+	RESET = 0b0000,
+	UP = 0b0010,
+	DOWN = 0b0001,
+	SIDE = 0b0100,
+	NEUTRAL = 0b1000,
+}
+
+enum {
+	FLOOR = 0b001,
+	CEILING = 0b010,
+	WALL = 0b100,
+}
+
 
 var control : int = STANDARD
 var controls : Array[State] = [
@@ -20,32 +30,52 @@ var controls : Array[State] = [
 	Damaged.new(self),
 ]
 
-var jump := false
-var fall := false
-var fast_fall := false
-var ground := false
-var move := false
-var attack := false
-var contact := false
-var direction:= Vector2.ZERO
+var gamepad : Gamepad ## The gamepad used by the parent player
+var direction : int = RESET ## The directions for attack
+var direction_done : int = RESET ## The directions of previous attacks while in air
+var contact_walls : int = RESET ## directions of walls
+var velocity := Vector2.ZERO ## the velocity of the parent player
+var queued : int = RESET ## The attack that is queued
+var queueable := true ## if attack is queueable
 
 
-func update_conditions(pad : Gamepad, vel : Vector2, walls : int) -> void:
-	ground = walls & 1
-	jump = pad.jump
-	fall = not ground and vel.y >= 0
-	fast_fall = vel.y > 200
-	move = pad.direction.x != 0
-	attack = pad.attack
-	contact = bool(walls)
-	var dir := pad.direction
-	if pad.attack:
-		direction = Vector2(abs(dir.x), dir.y).normalized()
+func update_conditions(vel : Vector2, walls : int) -> void:
+	queued = RESET
+	contact_walls = walls
+	velocity = vel
 	match self[&"parameters/playback"].get_current_node():
 		&"Standard":
 			control = STANDARD
+			if walls & FLOOR:
+				direction_done = RESET
+				queueable = true
 		&"Attack":
-			control = ATTACK			
+			control = ATTACK
+
+
+func gamepad_direction() -> int:
+	var dir = gamepad.direction
+	if dir == Vector2.ZERO:
+		return NEUTRAL
+	if abs(dir.y) >= abs(dir.x):
+		return UP if dir.y < 0 else DOWN
+	return SIDE
+
+
+func is_attack_queued() -> bool:
+	if queueable and gamepad.attack:
+		var dir := gamepad_direction()
+		if not (dir & direction_done):
+			direction = dir
+			queued = dir
+			direction_done += dir
+			queueable = false
+			return true
+	return false
+
+
+func make_queueable() -> void:
+	queueable = true
 
 
 func x_move(x : float, x_vel : float) -> float:
@@ -54,6 +84,16 @@ func x_move(x : float, x_vel : float) -> float:
 
 func y_move() -> float:
 	return 0.0
+
+
+func is_exit_ground() -> bool:
+	return gamepad.jump or is_exit_standard()
+
+
+func is_exit_standard() -> bool:
+	return is_attack_queued()
+
+
 
 
 class State:
@@ -81,9 +121,9 @@ class Standard extends State:
 
 class Attack extends State:
 	func _x_move(x : float, x_vel : float) -> float:
-		if anim.direction == Vector2.RIGHT:
+		if anim.direction == SIDE:
 			return x_vel
-		if anim.ground:
+		if anim.contact_walls & 1:
 			var temp : float = x_vel - HORIZ_VEL * sign(x_vel) / 2.0
 			return temp if abs(temp) > 0.5 else 0.0
 		return super._x_move(x, x_vel)

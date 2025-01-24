@@ -11,9 +11,10 @@ var gamepad := Gamepad.new() ## the input that the player uses
 
 func _ready() -> void:
 	anim_tree.controls[anim_tree.STANDARD].flip_check.connect(_on_flip_checked)
+	anim_tree.gamepad = gamepad
+	
 
 func _physics_process(delta: float) -> void:
-	
 	gamepad.get_control_state()
 	
 	update_animation()
@@ -25,21 +26,21 @@ func _physics_process(delta: float) -> void:
 
 func update_animation() -> void:
 	var walls : int = int(is_on_floor()) + int(is_on_ceiling()) * 2 + 4 * int(is_on_wall())
-	anim_tree.update_conditions(gamepad, velocity, walls)
+	anim_tree.update_conditions(velocity, walls)
 	velocity.x = anim_tree.x_move(gamepad.direction.x, velocity.x)
 	if anim_tree["parameters/Standard/playback"].get_current_node() == &"Ground" and gamepad.jump:
 		velocity.y -= 300.0
 
 
 ## The attack from the player
-func attack(name : StringName) -> void:
-	match name:
+func attack(n : StringName) -> void:
+	match n:
 		&"spear":
 			velocity = Vector2(pow(-1, is_left) * 250, -200)
 		&"hammer":
 			pass
 		&"gauntlet":
-			velocity = Vector2(pow(-1, is_left) * 200, -250)
+			velocity = Vector2(pow(-1, is_left) * 200, -300)
 
 
 func _on_hitbox_area_entered(area: Area2D) -> void:
