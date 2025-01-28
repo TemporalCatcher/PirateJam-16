@@ -11,6 +11,7 @@ var gamepad := Gamepad.new() ## the input that the player uses
 
 func _ready() -> void:
 	anim_tree.controls[anim_tree.STANDARD].flip_check.connect(_on_flip_checked)
+	anim_tree.flip_check.connect(_on_flip_checked)
 	anim_tree.gamepad = gamepad
 	
 
@@ -41,6 +42,10 @@ func attack(n : StringName) -> void:
 			pass
 		&"gauntlet":
 			velocity = Vector2(pow(-1, is_left) * 200, -300)
+		&"dash_slash":
+			velocity = Vector2(pow(-1, is_left) * 800, 0)
+		&"stop":
+			velocity = Vector2.ZERO
 
 
 func _on_hitbox_area_entered(area: Area2D) -> void:

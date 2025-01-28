@@ -5,6 +5,7 @@ extends CharacterBody2D
 ## The parent class that covers everything that all entities uses
 ## such as collision shape and hitbox
 
+@export var health : int = 10
 @export var start_left := false
 @export var is_left := start_left: ## the direction that the actor is facing
 	set(left):

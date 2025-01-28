@@ -1,18 +1,48 @@
-[gd_scene load_steps=4 format=3 uid="uid://d30jturxoj5h0"]
+[gd_scene load_steps=7 format=3 uid="uid://d30jturxoj5h0"]
 
 [ext_resource type="PackedScene" uid="uid://c0vd06ff2s2fd" path="res://living/floor.tscn" id="1_qly53"]
 [ext_resource type="PackedScene" uid="uid://bpbhrjopx6je0" path="res://living/player.tscn" id="3_01e5t"]
 [ext_resource type="PackedScene" uid="uid://cq50r5ufbo24a" path="res://living/enemy.tscn" id="3_4mhs7"]
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_fawrv"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_gsv76"]
+normal = Vector2(1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_s34yx"]
+normal = Vector2(-1, 0)
+
 [node name="Main" type="Node2D"]
 
 [node name="Floor" parent="." instance=ExtResource("1_qly53")]
+position = Vector2(159, 271)
+
+[node name="WallL" type="StaticBody2D" parent="."]
 position = Vector2(163, 263)
+collision_mask = 0
+physics_material_override = SubResource("PhysicsMaterial_fawrv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallL"]
+position = Vector2(-167, 73)
+shape = SubResource("WorldBoundaryShape2D_gsv76")
+
+[node name="WallR" type="StaticBody2D" parent="."]
+position = Vector2(326, 526)
+collision_mask = 0
+physics_material_override = SubResource("PhysicsMaterial_fawrv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallR"]
+position = Vector2(170, -246)
+shape = SubResource("WorldBoundaryShape2D_s34yx")
 
 [node name="Player" parent="." instance=ExtResource("3_01e5t")]
 position = Vector2(30, 139)
 
 [node name="Enemy" parent="." instance=ExtResource("3_4mhs7")]
-process_mode = 4
-visible = false
 position = Vector2(223, 81)
+
+[node name="Enemy2" parent="." instance=ExtResource("3_4mhs7")]
+position = Vector2(254, 104)
+
+[node name="Enemy3" parent="." instance=ExtResource("3_4mhs7")]
+position = Vector2(163, 86)

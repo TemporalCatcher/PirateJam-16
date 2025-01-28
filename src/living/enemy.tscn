@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://cq50r5ufbo24a"]
+[gd_scene load_steps=9 format=3 uid="uid://cq50r5ufbo24a"]
 
 [ext_resource type="PackedScene" uid="uid://j8pjxck2ut1e" path="res://living/actor.tscn" id="1_fnb7r"]
+[ext_resource type="Script" path="res://living/enemy.gd" id="2_sxap1"]
 [ext_resource type="Texture2D" uid="uid://dx8a6lpontphy" path="res://living/player.png" id="3_0avfm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_26g7t"]
@@ -86,12 +87,13 @@ _data = {
 }
 
 [node name="Enemy" groups=["Enemy"] instance=ExtResource("1_fnb7r")]
-script = null
+script = ExtResource("2_sxap1")
 
 [node name="Hitbox" parent="." index="1"]
 collision_layer = 2
 
 [node name="Detector" type="Area2D" parent="." index="2"]
+visible = false
 position = Vector2(1, 0)
 collision_layer = 0
 collision_mask = 2
@@ -99,8 +101,10 @@ monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Detector" index="0"]
 shape = SubResource("RectangleShape2D_26g7t")
+disabled = true
 
 [node name="Attack" type="Area2D" parent="." index="3" groups=["Attack"]]
+visible = false
 position = Vector2(16.5, -9)
 collision_layer = 2
 collision_mask = 0
@@ -109,6 +113,7 @@ monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Attack" index="0"]
 shape = SubResource("RectangleShape2D_kdwcv")
+disabled = true
 
 [node name="ColorRect" type="ColorRect" parent="Attack/CollisionShape2D" index="0"]
 visible = false
@@ -138,6 +143,7 @@ libraries = {
 autoplay = "idle"
 script = null
 
+[connection signal="area_shape_entered" from="Hitbox" to="." method="_on_hitbox_area_shape_entered"]
 [connection signal="area_entered" from="Detector" to="." method="_on_detector_area_entered"]
 [connection signal="area_exited" from="Detector" to="." method="_on_detector_area_exited"]
 [connection signal="area_entered" from="Attack" to="." method="_on_attack_area_entered"]

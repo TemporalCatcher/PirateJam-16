@@ -2,6 +2,8 @@ class_name AnimTree
 extends AnimationTree
 ## This class deals with all transitions of animations
 
+signal flip_check(x : float)
+
 enum {
 	STANDARD,
 	ATTACK,
@@ -66,9 +68,20 @@ func is_attack_queued() -> bool:
 	if queueable and gamepad.attack:
 		var dir := gamepad_direction()
 		if not (dir & direction_done):
+			flip_check.emit(gamepad.direction.x)
 			direction = dir
 			queued = dir
 			direction_done += dir
+			queueable = false
+			return true
+	return false
+
+
+func is_combo_queued(dir : int) -> bool:
+	if queueable and gamepad.attack:
+		var dire := gamepad_direction()
+		if dir ==  dire:
+			direction = dir
 			queueable = false
 			return true
 	return false
@@ -94,6 +107,12 @@ func is_exit_standard() -> bool:
 	return is_attack_queued()
 
 
+func has_landed() -> bool:
+	if contact_walls & FLOOR:
+		direction_done = direction
+		return true
+	return false
+
 
 
 class State:
@@ -107,10 +126,8 @@ class State:
 	
 	
 	func _x_move(x : float, x_vel : float) -> float:
-		
 		if x == 0.0:
-			var temp : float = x_vel - HORIZ_VEL * sign(x_vel) / 2.0
-			return temp if abs(temp) > 0.5 else 0.0
+			return max(abs(x_vel) - HORIZ_VEL / 2.0, 0.0) * sign(x_vel)
 		flip_check.emit(x)
 		return clamp(-MAX_VEL, x * HORIZ_VEL + x_vel, MAX_VEL)
 
@@ -124,8 +141,7 @@ class Attack extends State:
 		if anim.direction == SIDE:
 			return x_vel
 		if anim.contact_walls & 1:
-			var temp : float = x_vel - HORIZ_VEL * sign(x_vel) / 2.0
-			return temp if abs(temp) > 0.5 else 0.0
+			return max(abs(x_vel) - HORIZ_VEL / 2.0, 0.0) * sign(x_vel)
 		return super._x_move(x, x_vel)
 
 
